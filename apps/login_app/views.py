@@ -14,6 +14,7 @@ def personal_profile(request):
         if len(errors):
             for tag, error in errors.iteritems():
                 messages.error(request, error, extra_tags='register')
+            return redirect('/')
         else:
             password = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt())
             User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], email_address=request.POST['email_address'], password=password)
@@ -23,6 +24,7 @@ def personal_profile(request):
         if len(errors):
             for tag, error in errors.iteritems():
                 messages.error(request, error, extra_tags='login')
+            return redirect('/')
         else:
             user_info = User.objects.get(email_address=request.POST['email_address'])
             request.session['first_name'] = user_info.first_name 
