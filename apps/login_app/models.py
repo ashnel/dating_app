@@ -10,36 +10,47 @@ nameregex = re.compile(r'^[a-zA-Z]+$')
 class UserManager(models.Manager):
     def basic_validator(self, postData):
         errors = {}
-        #user_info = User.objects.get(email_address=postData['email_address'])
-        #password = bcrypt.checkpw(postData['password'].encode(), user_info.password.encode())
         if postData['formtype'] == 'register':
             user_data = User.objects.filter(email_address=postData['email_address'])
             if not user_data:
                  pass
-            elif postData['email_address'] == user_data[0].email_address:
-                errors['email_address'] = 'This email is already registered.'
-            if len(postData['email_address']) < 1:
-                errors['email_address'] = 'Email field cannot be empty.'
-            elif not emailregex.match(postData['email_address']):
-                errors['email_address'] = 'Invalid email address.'
-            elif len(postData['first_name']) < 1:
+            if len(postData['first_name']) < 1:
                 errors['first_name'] = 'First name field cannot be empty.'
+                return errors
             elif not nameregex.match(postData['first_name']):
                 errors['first_name'] = 'First Name must be alphabetical characters only.'
+                return errors
             elif len(postData['last_name']) < 1:
                 errors['last_name'] = "Last name field cannot be empty."
+                return errors
             elif not nameregex.match(postData['last_name']):
                 errors['last_name'] = 'Last Name must be alphabetical characters only.'
+                return errors
+            elif len(postData['email_address']) < 1:
+                errors['email_address'] = 'Email field cannot be empty.'
+                return errors
+            if not emailregex.match(postData['email_address']):
+                errors['email_address'] = 'Invalid email address.'
+                return errors
             if len(postData['password']) == 0:
                 errors['password'] = 'Password field cannot be empty.'
+                return errors
             elif len(postData['password']) < 9:
                 errors['password'] = 'Password must be more than 8 characters.'
+                return errors
             elif len(postData['passwordcheck']) == 0:
                 errors['password'] = 'Confirm passw ord field cannot be empty.'
+                return errors
             elif len(postData['passwordcheck']) < 9:
                 errors['password'] = 'Password must be more than 8 characters.'
+                return errors
             elif postData['password'] != postData['passwordcheck']:
                 errors['password'] = 'Password does not match password confirmation.'
+                return errors
+            if User.objects.filter(email_address=postData['email_address']):
+                if postData['email_address'] == user_data[0].email_address:
+                    errors['email_address'] = 'This email is already registered.'
+                    return errors
             return errors
         elif postData['formtype'] == 'login':
             user_data = User.objects.filter(email_address=postData['email_address'])
