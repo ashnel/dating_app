@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.db import models
+from datetime import datetime, date
 import bcrypt
 import re
 
@@ -26,6 +27,25 @@ class UserManager(models.Manager):
             elif not nameregex.match(postData['last_name']):
                 errors['last_name'] = 'Last Name must be alphabetical characters only.'
                 return errors
+            if not 'gender' in postData:
+                errors['gender'] = 'You must select a gender option.'
+                return errors
+            if not 'orientation' in postData:
+                errors['orientation'] = 'You must select an orientation option.'
+                return errors
+            if postData['birthdate'] == '':
+                errors['birthdate'] = 'You must enter a birthday.'
+                return errors
+            elif postData['birthdate'] != '':
+                current_date = (datetime.now())
+                birthday = datetime.strptime(postData['birthdate'], "%Y-%m-%d")
+                days = current_date - birthday
+                if days.days < 6570 and days.days > 0:
+                    errors['birthdate'] = 'You must be 18 or older to sign up.'
+                    return errors
+                elif days.days < 0:
+                    errors['birthdate'] = 'You cannot select a date that has not occured yet.'
+                    return errors
             elif len(postData['email_address']) < 1:
                 errors['email_address'] = 'Email field cannot be empty.'
                 return errors
@@ -75,6 +95,11 @@ class UserManager(models.Manager):
 class User(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+    gender = models.CharField(max_length=255)
+    orientation = models.CharField(max_length=255)
+    birthdate = models.DateField()
+    age = models.IntegerField()
+    number = models.IntegerField()
     email_address = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add = True)
