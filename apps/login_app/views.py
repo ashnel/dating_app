@@ -27,6 +27,11 @@ def personal_profile(request):
             life_path_number = 0
             for x in added_date_string:
                 life_path_number += int(x)
+            if life_path_number > 9:
+                number_str = str(life_path_number)
+                life_path_number = 0
+                for x in number_str:
+                    life_path_number += int(x)
             User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], email_address=request.POST['email_address'], password=password, gender=request.POST['gender'], orientation=request.POST['orientation'], birthdate=request.POST['birthdate'], age=age, number=life_path_number)
             user_info = User.objects.get(email_address=request.POST['email_address'])
             request.session['first_name'] = user_info.first_name 
