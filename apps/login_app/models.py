@@ -11,6 +11,8 @@ nameregex = re.compile(r'^[a-zA-Z]+$')
 class UserManager(models.Manager):
     def basic_validator(self, postData):
         errors = {}
+        if not 'formtype' in postData: 
+            return False
         if postData['formtype'] == 'register':
             user_data = User.objects.filter(email_address=postData['email_address'])
             if not user_data:
@@ -59,10 +61,10 @@ class UserManager(models.Manager):
                 errors['password'] = 'Password must be more than 8 characters.'
                 return errors
             elif len(postData['passwordcheck']) == 0:
-                errors['password'] = 'Confirm passw ord field cannot be empty.'
+                errors['password'] = 'Confirm password field cannot be empty.'
                 return errors
             elif len(postData['passwordcheck']) < 9:
-                errors['password'] = 'Password must be more than 8 characters.'
+                errors['password'] = 'Confirmed password must be more than 8 characters.'
                 return errors
             elif postData['password'] != postData['passwordcheck']:
                 errors['password'] = 'Password does not match password confirmation.'
@@ -77,7 +79,7 @@ class UserManager(models.Manager):
             if not emailregex.match(postData['email_address']) and postData['email_address'] != '':
                 errors['email_address'] = 'Invalid email address.'
                 return errors
-            elif not user_data or postData['email_address'] == '':
+            elif not user_data and postData['email_address'] == '':
                  errors['email_address'] = 'Email field cannot be empty.'
                  return errors
             elif not user_data:
@@ -85,12 +87,22 @@ class UserManager(models.Manager):
                 return errors
             user_data = User.objects.get(email_address=postData['email_address'])
             password = bcrypt.checkpw(postData['password'].encode(), user_data.password.encode())
-            if len(postData['password']) == 0:
+            if len(postData['password']) <= 0:
                 errors['password'] = 'Password field cannot be empty.'
-
+                return errors
             elif postData['email_address'] != user_data.email_address or password != True:
                 errors['password'] = 'Your email and password do not match. Please try again.'
-            return errors
+                return errors
+        elif postData['formtype'] == 'update':
+            if len(postData['password']) < 9:
+                errors['password'] = 'Password must be more than 8 characters.'
+            elif len(postData['passwordcheck']) < 9:
+                errors['password'] = 'Confirmed password must be more than 8 characters.'
+                return errors
+            elif postData['password'] != postData['passwordcheck']:
+                errors['password'] = 'Password does not match password confirmation.'
+                return errors
+        return errors
 
 class Location(models.Model):
     city = models.CharField(max_length=255)

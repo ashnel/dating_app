@@ -9,8 +9,10 @@ import bcrypt
 def homepage(request):
     return render(request, 'login_app/homepage.html')
 
-def personal_profile(request):
+def dashboard(request):
     errors = User.objects.basic_validator(request.POST)
+    if not 'formtype' in request.POST:
+        return render(request, 'dashboard_templates/dashboard.html', {'user': request.session['first_name']})
     if request.POST['formtype'] == 'register':
         if len(errors):
             for tag, error in errors.iteritems():
@@ -35,6 +37,10 @@ def personal_profile(request):
             User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], email_address=request.POST['email_address'], password=password, gender=request.POST['gender'], orientation=request.POST['orientation'], birthdate=request.POST['birthdate'], age=age, number=life_path_number)
             user_info = User.objects.get(email_address=request.POST['email_address'])
             request.session['first_name'] = user_info.first_name 
+            errors['email'] = 'Thank you for registering. You may now login.'
+            for tag, error in errors.iteritems():
+                messages.error(request, error, extra_tags='register')
+            return redirect('/')
     elif request.POST['formtype'] == 'login':
         if len(errors):
             for tag, error in errors.iteritems():
@@ -44,7 +50,50 @@ def personal_profile(request):
             user_info = User.objects.get(email_address=request.POST['email_address'])
             request.session['first_name'] = user_info.first_name 
             request.session['id'] = user_info.id
+            request.session['number'] = user_info.number
             password = bcrypt.checkpw(request.POST['password'].encode(), user_info.password.encode())
             if request.POST['email_address'] == user_info.email_address and password == True:
-                return render(request, 'login_app/personal_profile.html')
-    return render(request, 'login_app/personal_profile.html')
+                #return render(request, 'dashboard_templates/dashboard.html', {'user': request.session['first_name']})
+                return redirect('/dashboard')
+    return render(request, 'dashboard_templates/dashboard.html', {'user': request.session['first_name']})
+
+def home(request):
+    return render(request, 'dashboard_templates/dashboard.html', {'user': request.session['first_name']})
+
+def settings(request):
+    current_user = User.objects.get(id=request.session['id'])
+    birthday = unicode(current_user.birthdate)
+    return render(request, 'dashboard_templates/settings.html', {'first_name': current_user.first_name, 'last_name': current_user.last_name, 'birthdate': birthday, 'email_address': current_user.email_address, 'gender': current_user.gender, 'orientation': current_user.orientation})
+
+def update(request):
+    errors = User.objects.basic_validator(request.POST)
+    updated_user = User.objects.get(id=request.session['id'])
+    if request.POST['password'] == '':
+        updated_user.first_name = request.POST['first_name']
+        updated_user.last_name = request.POST['last_name']
+        updated_user.gender = request.POST['gender']
+        updated_user.orientation = request.POST['orientation']
+        updated_user.birthdate = request.POST['birthdate']
+        updated_user.email_address = request.POST['email_address']
+        updated_user.save()
+        request.session['first_name'] = updated_user.first_name
+    else:
+        password = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt())
+        if len(errors):
+            for tag, error in errors.iteritems():
+                messages.error(request, error, extra_tags='update')
+        else:
+            updated_user.first_name = request.POST['first_name']
+            updated_user.last_name = request.POST['last_name']
+            updated_user.gender = request.POST['gender']
+            updated_user.orientation = request.POST['orientation']
+            updated_user.birthdate = request.POST['birthdate']
+            updated_user.email_address = request.POST['email_address']
+            updated_user.password = password
+            updated_user.save()
+            request.session['first_name'] = updated_user.first_name
+    return redirect('/settings')
+
+def logout(request):
+    request.session.flush()
+    return redirect('/')

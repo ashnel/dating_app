@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
     <script type="text/javascript" src='http://code.jquery.com/jquery-1.10.2.min.js'></script> 
     <script type="text/javascript">
         $(document).ready(function(){
@@ -25,9 +26,10 @@
     <title>Dashboard</title>
 </head>
 <body>
-    <a href="/settings">Settings</a>
-    <a href="/logout">Logout</a>
-    <h1>Hello {{user.name}}</h1>
+    <a href="{% url 'my_settings' %}">Settings</a>
+    <a href="{% url 'my_logout' %}">Logout</a>
+    <h1>Hello {{user}}!</h1>
+    <h2>Your number is {{request.session.number}}.</h2>
 
     <div id="">
         <!-- Add list of friends to this div -->

@@ -12,7 +12,6 @@ def dashboard(request):
             'user': User.objects.get(id=request.session['id']),
             'friends': User.objects.get(id=request.session['id']).friends
         }
-
         result = render(request, 'dashboard_templates/dashboard.html', context)
     else:
         result = redirect ('/login')
