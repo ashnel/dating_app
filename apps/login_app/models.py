@@ -92,6 +92,10 @@ class UserManager(models.Manager):
                 errors['password'] = 'Your email and password do not match. Please try again.'
             return errors
 
+class Location(models.Model):
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=255)
+
 class User(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -102,6 +106,36 @@ class User(models.Model):
     number = models.IntegerField()
     email_address = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
+    #location = models.ForeignKey(Location, related_name='address') 
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
     objects = UserManager()
+
+class Number(models.Model):
+    pass
+
+class Picture(models.Model):
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+class Rating(models.Model):
+    rating_answer = models.BooleanField()
+    users = models.ManyToManyField(User, related_name="ratings")
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+class Match(models.Model):
+    answer = models.BooleanField()
+    user = models.ManyToManyField(User, related_name="matches")
+
+class Chatroom(models.Model):
+    users = models.ManyToManyField(User, related_name="chatrooms")
+    updated_at = models.DateTimeField(auto_now = True)
+
+class Message(models.Model):
+    message = models.TextField()
+    chatroom = models.ForeignKey(Chatroom, related_name='messages')
+    user = models.ForeignKey(User, related_name='messages_sent')
+    recipient = models.ForeignKey(User, related_name='messages_received')
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
