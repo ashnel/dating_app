@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <script type="text/javascript" src='http://code.jquery.com/jquery-1.10.2.min.js'></script> 
+    <title>Settings</title>
+</head>
+<body>
+    <div class='container'>
+        <a href="{% url 'my_submit' %}">Dashboard</a>
+        <a href="{% url 'my_logout' %}">Logout</a>
+    
+    <div class='row'>
+        <div class='col s12'>
+            <form action='{% url "my_update" %}' method='post'>
+                {% csrf_token %}
+                <h3 class='col s12'>Settings</h3>
+                <input type='hidden' name='formtype' value='update' />
+                <div class='col s6'>
+                    <input type='text' name='first_name' placeholder='First Name' value='{{first_name}}'>
+                </div>
+                <div class='col s6'>
+                    <input type='text' name='last_name' placeholder='Last Name' value='{{last_name}}'>
+                </div>
+                <select name='gender' class="browser-default col s6">
+                    <option value='{{gender}}' selected='selected'>{{gender|title}}</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+                <select name='orientation' class="browser-default col s6">
+                    <option value='{{orientation}}' selected='selected'>{{orientation|title}}</option>
+                    <option value="straight">Straight</option>
+                    <option value="gay">Gay</option>
+                    <option value="bisexual">Bisexual</option>
+                    <option value="other">Other</option>
+                </select>
+                <div name='birthdate' class='col s12'>
+                    <input type='date' name='birthdate' value="{{birthdate}}">
+                </div>
+                <div class='col s12'>
+                    <input type='text' name='email_address' placeholder='Email Address' value='{{email_address}}'>
+                </div>
+                <div class='col s6'>
+                    <input type='password' name='password' placeholder='Password'>
+                </div>
+                <div class='col s6'>
+                    <input type='password' name='passwordcheck' placeholder='Confirm Password'>
+                </div>
+                <input class='col s12 waves-effect waves-light btn' type='submit' value='Update'>
+            </form>
+            <div class='col s12'>
+                <br>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'update' in message.tags %}
+                            {{ message }}<br>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
