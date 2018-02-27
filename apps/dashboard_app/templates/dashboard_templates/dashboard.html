@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src='http://code.jquery.com/jquery-1.10.2.min.js'></script> 
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+        })
+
+        $(document).on('click', 'button', function(){
+            $friend_id=$(this).attr('value')
+            $.ajax({
+                type: "POST",
+                dataType: json,
+                data: {action:"get_messages", id: $friend_id},
+                success: function(data){
+                    print(data);
+                    // $("#messages").html("");
+                    // $("#messages").append("<p>" + data.messages)
+                },
+            })
+        })
+    </script>
+    <title>Dashboard</title>
+</head>
+<body>
+    <a href="/settings">Settings</a>
+    <a href="/logout">Logout</a>
+    <h1>Hello {{user.name}}</h1>
+
+    <div id="">
+        <!-- Add list of friends to this div -->
+        <div id="friends">
+            {% for friend in user.friends %}
+                <div class="friend">
+                    <button value={{friend.id}}><img src=><h3>{{friend.name}}</h3></button>
+                    
+                </div>
+            {% endfor %}
+        </div> 
+        <!-- This div will show the last 5 messages sent between user and currently selected friend -->
+        <div id="messages"></div>
+    </div>
+</body>
+</html>
