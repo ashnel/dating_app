@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Find Your eMatch!</title>
+    <title>Find Your Match!</title>
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
     <!-- Compiled and minified JavaScript -->
@@ -28,6 +28,22 @@
                     </div>
                     <div class='col s6'>
                         <input type='text' name='last_name' placeholder='Last Name'>
+                    </div>
+                    <select name='gender' class="browser-default col s6">
+                        <option value="gender_option" disabled selected>Choose Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <select name='orientation' class="browser-default col s6">
+                        <option value="" disabled selected>Choose Orientation</option>
+                        <option value="straight">Straight</option>
+                        <option value="gay">Gay</option>
+                        <option value="bisexual">Bisexual</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div name='birthdate' class='col s12'>
+                        <input type='date' name='birthdate' placeholder='Birthdate'>
                     </div>
                     <div class='col s12'>
                         <input type='text' name='email_address' placeholder='Email Address'>
