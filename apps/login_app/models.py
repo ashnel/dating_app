@@ -106,7 +106,7 @@ class User(models.Model):
     number = models.IntegerField()
     email_address = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
-    location = models.ForeignKey(Location, related_name='address') 
+    #location = models.ForeignKey(Location, related_name='address') 
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
     objects = UserManager()
