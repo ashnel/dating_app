@@ -126,7 +126,9 @@ class User(models.Model):
     objects = UserManager()
 
 class Number(models.Model):
-    pass
+    number = models.IntegerField()
+    good = models.IntegerField()
+    bad = models.IntegerField()
 
 class Picture(models.Model):
     image = models.FileField(upload_to='profile', null=True)
@@ -142,7 +144,8 @@ class Rating(models.Model):
 
 class Match(models.Model):
     answer = models.BooleanField()
-    user = models.ManyToManyField(User, related_name="matches")
+    user = models.ForeignKey(User, related_name="users")
+    matched_user = models.ForeignKey(User, related_name="matches")
 
 class Chatroom(models.Model):
     users = models.ManyToManyField(User, related_name="chatrooms")

@@ -24,27 +24,52 @@
         })
     </script>
     <title>Dashboard</title>
+    <style>
+        body {
+            background-color: #b0d0d3
+        }
+        .container {
+            background-color: white;
+            padding: 1%;
+            border: solid black 1px;
+        }
+        a {
+            color: white;
+        }
+        .btn {
+            margin: 10px;
+            margin-top: 0px;
+            margin-left: 0px;
+            margin-bottom: 0px;
+        }
+    </style>
     {% load static %}
 </head>
 <body>
-    <a href="{% url 'my_settings' %}">Settings</a>
-    <a href="{% url 'my_logout' %}">Logout</a>
-    <h1>Hello {{user}}!</h1>
-    <img src="{% static 'media/profile/profile_pic_avatar.png' %}">
-    <h2>Your number is {{request.session.number}}.</h2>
-
-    <div id="">
-        <!-- Add list of friends to this div -->
-        <div id="friends">
-            {% for friend in user.friends %}
-                <div class="friend">
-                    <button value={{friend.id}}><img src=><h3>{{friend.name}}</h3></button>
-                    
-                </div>
-            {% endfor %}
-        </div> 
-        <!-- This div will show the last 5 messages sent between user and currently selected friend -->
-        <div id="messages"></div>
+    <div class='container'>
+        <div class='row'>
+            <a class='col s1 waves-effect waves-light btn' href="{% url 'my_settings' %}">Settings</a>
+            <a class='col s1 waves-effect waves-light btn' href="{% url 'my_matches' %}">Matches</a>
+            <a class='col s1 waves-effect waves-light btn' href="{% url 'my_logout' %}">Logout</a>
+            <br><br><br>
+            <div class='col s12'>
+                <h1>Hello {{user}}! Your number is {{request.session.number}}.</h1>
+            </div>
+        
+            <div id="">
+                <!-- Add list of friends to this div -->
+                <div id="friends">
+                    {% for friend in user.friends %}
+                        <div class="friend">
+                            <button value={{friend.id}}><img src=><h3>{{friend.name}}</h3></button>
+                            
+                        </div>
+                    {% endfor %}
+                </div> 
+                <!-- This div will show the last 5 messages sent between user and currently selected friend -->
+                <div id="messages"></div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
