@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib import messages
 from datetime import datetime, date
-from .models import User, Number
+from .models import User, Number, Picutre
 import bcrypt
 
 def homepage(request):
@@ -14,9 +14,11 @@ def homepage(request):
     return render(request, 'login_app/homepage.html')
 
 def dashboard(request):
-    errors = User.objects.basic_validator(request.POST)
+    errors = User.objects.basic_validator(request.POST, request.FILES)
     if not 'formtype' in request.POST:
-        return render(request, 'dashboard_templates/dashboard.html', {'user': request.session['first_name']})
+        pic = Picture.objects.get(user=request.session['id'])
+        format 
+        return render(request, 'dashboard_templates/dashboard.html', {'user': request.session['first_name'], 'pic': pic})
     if request.POST['formtype'] == 'register':
         if len(errors):
             for tag, error in errors.iteritems():
@@ -38,8 +40,8 @@ def dashboard(request):
                 life_path_number = 0
                 for x in number_str:
                     life_path_number += int(x)
-            User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], email_address=request.POST['email_address'], password=password, gender=request.POST['gender'], orientation=request.POST['orientation'], birthdate=request.POST['birthdate'], age=age, number=life_path_number)
-            user_info = User.objects.get(email_address=request.POST['email_address'])
+            user_info = User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], email_address=request.POST['email_address'], password=password, gender=request.POST['gender'], orientation=request.POST['orientation'], birthdate=request.POST['birthdate'], age=age, number=life_path_number)
+            picture = Picture.objects.create(image=request.FILES['profile_pic'], user = user_info)
             request.session['first_name'] = user_info.first_name 
             errors['email'] = 'Thank you for registering. You may now login.'
             for tag, error in errors.iteritems():
@@ -56,6 +58,7 @@ def dashboard(request):
             request.session['id'] = user_info.id
             request.session['number'] = user_info.number
             password = bcrypt.checkpw(request.POST['password'].encode(), user_info.password.encode())
+
             if request.POST['email_address'] == user_info.email_address and password == True:
                 #return render(request, 'dashboard_templates/dashboard.html', {'user': request.session['first_name']})
                 return redirect('/dashboard')
