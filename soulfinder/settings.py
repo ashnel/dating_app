@@ -122,5 +122,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_URL = 'static/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
+MEDIA_URL = 'apps/dashboard_app/static/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'apps/dashboard_app/static/media')
