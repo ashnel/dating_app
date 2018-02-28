@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib import messages
 from datetime import datetime, date
-from .models import User, Number, Picutre
+from .models import User, Number, Picture
 import bcrypt
 
 def homepage(request):
