@@ -17,8 +17,11 @@ def dashboard(request):
     errors = User.objects.basic_validator(request.POST, request.FILES)
     if not 'formtype' in request.POST:
         pic = Picture.objects.get(user=request.session['id'])
-        format 
-        return render(request, 'dashboard_templates/dashboard.html', {'user': request.session['first_name'], 'pic': pic})
+        context = {
+            'pic': pic,
+            'user': request.session['first_name']
+        }
+        return render(request, 'dashboard_templates/dashboard.html', context)
     if request.POST['formtype'] == 'register':
         if len(errors):
             for tag, error in errors.iteritems():
