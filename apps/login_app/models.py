@@ -9,7 +9,7 @@ emailregex = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9.+_-]+\.[a-zA-Z]+$')
 nameregex = re.compile(r'^[a-zA-Z]+$')
 
 class UserManager(models.Manager):
-    def basic_validator(self, postData):
+    def basic_validator(self, postData, fileData):
         errors = {}
         if not 'formtype' in postData: 
             return False
@@ -69,6 +69,8 @@ class UserManager(models.Manager):
             elif postData['password'] != postData['passwordcheck']:
                 errors['password'] = 'Password does not match password confirmation.'
                 return errors
+            if not 'profile_pic' in fileData:
+                errors['image'] = "Please upload a profile picture."
             if User.objects.filter(email_address=postData['email_address']):
                 if postData['email_address'] == user_data[0].email_address:
                     errors['email_address'] = 'This email is already registered.'
@@ -127,8 +129,10 @@ class Number(models.Model):
     pass
 
 class Picture(models.Model):
+    image = models.FileField(upload_to='profile', null=True)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+    user = models.ForeignKey(User, related_name='pictures', null=True)
 
 class Rating(models.Model):
     rating_answer = models.BooleanField()
