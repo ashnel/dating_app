@@ -30,7 +30,7 @@
     <a href="{% url 'my_settings' %}">Settings</a>
     <a href="{% url 'my_logout' %}">Logout</a>
     <h1>Hello {{user}}!</h1>
-    <img src="{% static 'media/profile/profile_pic_avatar.png' %}">
+    <img src="{% static 'media/' %}{{ pic.image }}">
     <h2>Your number is {{request.session.number}}.</h2>
 
     <div id="">
