@@ -117,33 +117,26 @@ def settings(request):
     return render(request, 'dashboard_templates/settings.html', {'first_name': current_user.first_name, 'last_name': current_user.last_name, 'birthdate': birthday, 'email_address': current_user.email_address, 'gender': current_user.gender, 'orientation': current_user.orientation})
 
 def matches(request):
+    
     current_user = User.objects.get(id=request.session['id'])
     numbers = Number.objects.filter(number=current_user.number)
     for x in numbers:
         compats = User.objects.filter(number=x.good)
         for i in compats:
             matches = Match.objects.filter(matched_user=i.id).filter(user=current_user.id)
-            #print matches
             if len(matches) == 1:
-                continue
+                if i.id != matches[0].matched_user.id:
+                    continue
             else:
-                print 'empty'
-                request.session['compat_arr'].append(i.id)
-                request.session.modified = True
-                return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age})
-            #print matches[0].matched_user.id
-            #print 'matches', matches[0].user.first_name
-            #print matches[0].user.first_name
-            #if i.id != matches[count].matched_user.id:
-                #print i.first_name
-            # else:
-            #     #print 'empty'
-            #     if i.id != request.session['id']:
-            #         request.session['compat_arr'].append(i.id)
-            #         request.session.modified = True
-    return redirect('/dashboard')
+                if i.id != request.session['id']:
+                    request.session['compat_arr'].append(i.id)
+                    request.session.modified = True
+    if request.session['compat_arr'] == []:
+        return redirect('/dashboard')
+    return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age})
 
 def vote(request):
+    print request.session['compat_arr']
     matched_user_person = request.session['compat_arr'][0]
     current_user = User.objects.get(id=request.session['id'])
     if len(request.session['compat_arr']):
@@ -154,7 +147,6 @@ def vote(request):
                 request.session.modified = True
                 return redirect('/dashboard')
             else:
-                print len(request.session['compat_arr'])
                 request.session.modified = True
                 return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age})
         elif request.POST['formtype'] == 'no':
@@ -164,7 +156,6 @@ def vote(request):
                 request.session.modified = True
                 return redirect('/dashboard')
             else:
-                print len(request.session['compat_arr'])
                 request.session.modified = True
                 return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age})
     else:
