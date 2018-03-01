@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <script type="text/javascript" src='http://code.jquery.com/jquery-1.10.2.min.js'></script> 
+    <script type="text/javascript" src='{% static "reconnecting-websocket.min.js" %}'></script>
+    <script type="text/javascript" src='{% static "chat.js" %}'></script>
+    <link rel="stylesheet" href="chatroom.css">
+
+    <title>Chatroom test</title>
+</head>
+<body>
+    <a href="/dashboard">Return</a>
+    <h3>
+        <label for="handle">Your name:</label>
+        <input id="handle" type="text" value="{{user.first_name}}" readonly>
+    </h3>
+    <div id="messages">
+        <form id="chatform">
+            <table id="chat">
+                <tbody>
+                {% for message in messages %}
+                    <tr>
+                    <td class ='time'>{{ message.formatted_created_at }}</td>
+                    <td class="name">{{ message.handle }}</td>
+                    <td>{{ message.message }}</td>
+                    </tr> 
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                <td>Say something:</td>
+                <td colspan=2>
+                    <input id="message" type="text" placeholder="message">
+                    <button type="submit" id="go">Reply</button>
+                </td>
+                </tfoot>
+            </table>
+        </form>
+    </div>
+</body>
+</html>

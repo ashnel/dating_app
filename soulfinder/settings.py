@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -122,5 +123,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
+        },
+        "ROUTING": "apps.dashboard_app.routing.channel_routing",
+    },
+}
 MEDIA_URL = 'apps/dashboard_app/static/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'apps/dashboard_app/static/media')

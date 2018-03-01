@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib import messages
 from datetime import datetime, date
-from .models import User, Number, Picture, Match
+from .models import User, Number, Picture, Match, Location
 import bcrypt
 
 def homepage(request):
@@ -71,6 +71,7 @@ def dashboard(request):
                     life_path_number += int(x)
             user_info = User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], email_address=request.POST['email_address'], password=password, gender=request.POST['gender'], orientation=request.POST['orientation'], birthdate=request.POST['birthdate'], age=age, number=life_path_number)
             picture = Picture.objects.create(image=request.FILES['profile_pic'], user = user_info)
+            location = Location.objects.create(city=request.POST['city'], state=request.POST['state'], user=user_info)
             request.session['first_name'] = user_info.first_name 
             errors['email'] = 'Thank you for registering. You may now login.'
             for tag, error in errors.iteritems():

@@ -71,6 +71,10 @@ class UserManager(models.Manager):
                 return errors
             if not 'profile_pic' in fileData:
                 errors['image'] = "Please upload a profile picture."
+            if len(postData['city']) == 0:
+                errors['city'] = "Please enter a valid city."
+            if len(postData['state']) == 0:
+                errors['state'] = "Please enter a valid state."
             if User.objects.filter(email_address=postData['email_address']):
                 if postData['email_address'] == user_data[0].email_address:
                     errors['email_address'] = 'This email is already registered.'
@@ -106,9 +110,6 @@ class UserManager(models.Manager):
                 return errors
         return errors
 
-class Location(models.Model):
-    city = models.CharField(max_length=255)
-    state = models.CharField(max_length=255)
 
 class User(models.Model):
     first_name = models.CharField(max_length=255)
@@ -125,6 +126,11 @@ class User(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
     objects = UserManager()
 
+class Location(models.Model):
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=2)
+    user = models.ForeignKey(User, related_name="location")
+    
 class Number(models.Model):
     number = models.IntegerField()
     good = models.IntegerField()
@@ -148,13 +154,28 @@ class Match(models.Model):
     matched_user = models.ForeignKey(User, related_name="matches")
 
 class Chatroom(models.Model):
+    label = models.SlugField(unique=True)
     users = models.ManyToManyField(User, related_name="chatrooms")
     updated_at = models.DateTimeField(auto_now = True)
+
+    def __unicode__(self):
+        return self.label
 
 class Message(models.Model):
     message = models.TextField()
     chatroom = models.ForeignKey(Chatroom, related_name='messages')
-    user = models.ForeignKey(User, related_name='messages_sent')
-    recipient = models.ForeignKey(User, related_name='messages_received')
+    handle = models.TextField()
+    #No longer needed. All messages will be contained in a chat room, and the chatroom will remember the users belonging to it
+    # user = models.ForeignKey(User, related_name='messages_sent')
+    # recipient = models.ForeignKey(User, related_name='messages_received')
     created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
+    #We won't be updating sent messages
+    # updated_at = models.DateTimeField(auto_now = True)
+    def __unicode__(self):
+        return '[{created_at}] {handle}: {message}'.format(**self.as_dict())
+
+    @property
+    def formatted_created_at(self):
+        return self.created_at.strftime('%b %d %I:%M %p')
+    def as_dict(self):
+        return {'handle': self.handle, 'message': self.message, 'created_at': self.formatted_created_at}
