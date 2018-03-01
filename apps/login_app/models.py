@@ -154,13 +154,28 @@ class Match(models.Model):
     matched_user = models.ForeignKey(User, related_name="matches")
 
 class Chatroom(models.Model):
+    label = models.SlugField(unique=True)
     users = models.ManyToManyField(User, related_name="chatrooms")
     updated_at = models.DateTimeField(auto_now = True)
+
+    def __unicode__(self):
+        return self.label
 
 class Message(models.Model):
     message = models.TextField()
     chatroom = models.ForeignKey(Chatroom, related_name='messages')
-    user = models.ForeignKey(User, related_name='messages_sent')
-    recipient = models.ForeignKey(User, related_name='messages_received')
+    handle = models.TextField()
+    #No longer needed. All messages will be contained in a chat room, and the chatroom will remember the users belonging to it
+    # user = models.ForeignKey(User, related_name='messages_sent')
+    # recipient = models.ForeignKey(User, related_name='messages_received')
     created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
+    #We won't be updating sent messages
+    # updated_at = models.DateTimeField(auto_now = True)
+    def __unicode__(self):
+        return '[{created_at}] {handle}: {message}'.format(**self.as_dict())
+
+    @property
+    def formatted_created_at(self):
+        return self.created_at.strftime('%b %d %I:%M %p')
+    def as_dict(self):
+        return {'handle': self.handle, 'message': self.message, 'created_at': self.formatted_created_at}
