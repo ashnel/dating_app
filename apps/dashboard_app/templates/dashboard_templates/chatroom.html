@@ -6,10 +6,12 @@
     <script type="text/javascript" src='http://code.jquery.com/jquery-1.10.2.min.js'></script> 
     <script type="text/javascript" src='{% static "reconnecting-websocket.min.js" %}'></script>
     <script type="text/javascript" src='{% static "chat.js" %}'></script>
+    <link rel="stylesheet" href="chatroom.css">
 
     <title>Chatroom test</title>
 </head>
 <body>
+    <a href="/dashboard">Return</a>
     <h3>
         <label for="handle">Your name:</label>
         <input id="handle" type="text" value="{{user.first_name}}" readonly>
@@ -20,8 +22,8 @@
                 <tbody>
                 {% for message in messages %}
                     <tr>
-                    <td>{{ message.formatted_created_at }}</td>
-                    <td>{{ message.handle }}</td>
+                    <td class ='time'>{{ message.formatted_created_at }}</td>
+                    <td class="name">{{ message.handle }}</td>
                     <td>{{ message.message }}</td>
                     </tr> 
                 {% endfor %}
