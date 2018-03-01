@@ -9,18 +9,44 @@ import bcrypt
 def homepage(request):
     if 'compat_arr' not in request.session:
         request.session['compat_arr'] = []
+    if 'friends' not in request.session:
+        request.session['friends'] = []
     else:
-        request.session['compat_arr'] = []
+        request.session['friends'] = []
     return render(request, 'login_app/homepage.html')
 
 def dashboard(request):
     errors = User.objects.basic_validator(request.POST, request.FILES)
     if not 'formtype' in request.POST:
         pic = Picture.objects.get(user=request.session['id'])
+        friends_array = []
+        current_user = request.session['id']
+        user = Match.objects.filter(user=current_user)
+        matched = Match.objects.filter(matched_user=current_user)
+        for m in matched:
+            matchee = m.user
+            if m.answer == True:
+                for u in user:
+                    if u.matched_user == matchee:
+                        if u.answer == True and m.answer == True:
+                            friends_array.append(m.user)
+        friends = friends_array
+        print friends
         context = {
-            'pic': pic,
-            'user': request.session['first_name']
+             'pic': pic,
+             'user': request.session['first_name'],
+             'all_friends': friends
         }
+        # for u in user:
+        #     if u.matched_user == u.user:
+        #         if u.answer == True:
+        #             friends_array.append(u)
+        # friends = friends_array
+        # context = {
+        #     'pic': pic,
+        #     'user': request.session['first_name'],
+        #     'all_friends': friends
+        # }
         return render(request, 'dashboard_templates/dashboard.html', context)
     if request.POST['formtype'] == 'register':
         if len(errors):
@@ -63,12 +89,26 @@ def dashboard(request):
             password = bcrypt.checkpw(request.POST['password'].encode(), user_info.password.encode())
 
             if request.POST['email_address'] == user_info.email_address and password == True:
-                #return render(request, 'dashboard_templates/dashboard.html', {'user': request.session['first_name']})
-                return redirect('/dashboard')
+                pic = Picture.objects.get(user=request.session['id'])
+                friends_array = []
+                current_user = request.session['id']
+                user = Match.objects.filter(user=current_user)
+                matched = Match.objects.filter(matched_user=current_user)
+                for u in user:
+                    if u.matched_user == u.user:
+                        if u.answer == True:
+                            friends_array.append(u)
+                friends = friends_array
+                context = {
+                    'pic': pic,
+                    'user': request.session['first_name'],
+                    'all_friends': friends
+                }
+                return render(request, 'dashboard_templates/dashboard.html', context)
     return render(request, 'dashboard_templates/dashboard.html', {'user': request.session['first_name']})
 
 def home(request):
-    return render(request, 'dashboard_templates/dashboard.html', {'user': request.session['first_name']})
+    return render(request, 'dashboard_templates/dashboard.html', {'user': request.session['first_name'], 'all_frieds': friends})
 
 def settings(request):
     current_user = User.objects.get(id=request.session['id'])
@@ -82,22 +122,31 @@ def matches(request):
         compats = User.objects.filter(number=x.good)
         for i in compats:
             matches = Match.objects.filter(matched_user=i.id).filter(user=current_user.id)
-            if len(matches):
-                return redirect('/dashboard')
+            #print matches
+            if len(matches) == 1:
+                continue
             else:
                 print 'empty'
-                if i.id != request.session['id']:
-                    request.session['compat_arr'].append(i.id)
-                    request.session.modified = True
-    return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age})
+                request.session['compat_arr'].append(i.id)
+                request.session.modified = True
+                return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age})
+            #print matches[0].matched_user.id
+            #print 'matches', matches[0].user.first_name
+            #print matches[0].user.first_name
+            #if i.id != matches[count].matched_user.id:
+                #print i.first_name
+            # else:
+            #     #print 'empty'
+            #     if i.id != request.session['id']:
+            #         request.session['compat_arr'].append(i.id)
+            #         request.session.modified = True
+    return redirect('/dashboard')
 
 def vote(request):
     matched_user_person = request.session['compat_arr'][0]
     current_user = User.objects.get(id=request.session['id'])
     if len(request.session['compat_arr']):
         if request.POST['formtype'] == 'match':
-            print len(request.session['compat_arr'])
-            print 'if'
             Match.objects.create(answer=True, user=current_user, matched_user=User.objects.get(id=matched_user_person))
             del request.session['compat_arr'][0]
             if len(request.session['compat_arr']) == 0:
@@ -108,8 +157,15 @@ def vote(request):
                 request.session.modified = True
                 return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age})
         elif request.POST['formtype'] == 'no':
-            print 'no' 
-            return redirect('/dashboard')  
+            Match.objects.create(answer=False, user=current_user, matched_user=User.objects.get(id=matched_user_person))
+            del request.session['compat_arr'][0]
+            if len(request.session['compat_arr']) == 0:
+                request.session.modified = True
+                return redirect('/dashboard')
+            else:
+                print len(request.session['compat_arr'])
+                request.session.modified = True
+                return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age})
     else:
         print 'else'
         return redirect('/dashboard')
