@@ -15,7 +15,6 @@
             {% csrf_token %}
             <input class='col s12 waves-effect waves-light btn' type='submit' value='No'>
         </form>
-
         <form action="{% url 'my_vote' %}" method='post'>
             <input type='hidden' name='formtype' value='match' />
             {% csrf_token %}

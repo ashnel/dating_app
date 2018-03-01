@@ -42,6 +42,10 @@
             margin-left: 0px;
             margin-bottom: 0px;
         }
+        #matches {
+            border: solid black 1px; 
+            text-align: center;
+        }
     </style>
     {% load static %}
 </head>
@@ -55,22 +59,18 @@
             <div class='col s12'>
                 <h1>Hello {{user}}! Your number is {{request.session.number}}.</h1>
                 <img src="{% static 'media/' %}{{ pic.image }}">
-            </div>
-        
-            <div id="">
-                <!-- Add list of friends to this div -->
-                <div id="friends">
-                    {% for friend in user.friends %}
-                        <div class="friend">
-                            <button value={{friend.id}}><img src=><h3>{{friend.name}}</h3></button>
-                            
-                        </div>
-                    {% endfor %}
-                </div> 
-                <!-- This div will show the last 5 messages sent between user and currently selected friend -->
-                <div id="messages"></div>
+                <br><br><br>
             </div>
         </div>
+        <div class='row'>
+                <!-- Add list of friends to this div -->
+            <div class='col s12' id="matches">
+                    <h1>Matches</h1>
+                    {% for friend in all_friends %}
+                    <h4 class='col s2'>{{friend.first_name}}, {{friend.number}}</h4>
+                    {% endfor %}
+                </div> 
+            </div>
     </div>
 </body>
 </html>
