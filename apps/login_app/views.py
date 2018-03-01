@@ -29,13 +29,13 @@ def dashboard(request):
                 for u in user:
                     if u.matched_user == matchee:
                         if u.answer == True and m.answer == True:
-                            friends_array.append(m.user)
-        friends = friends_array
-        print friends
+                            friend_pics = Picture.objects.get(user=m.id)
+                            friends_array.append([m.user, friend_pics])
+       
         context = {
              'pic': pic,
              'user': request.session['first_name'],
-             'all_friends': friends
+             'all_friends': friends_array,
         }
         # for u in user:
         #     if u.matched_user == u.user:
