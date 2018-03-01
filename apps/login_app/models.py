@@ -71,6 +71,10 @@ class UserManager(models.Manager):
                 return errors
             if not 'profile_pic' in fileData:
                 errors['image'] = "Please upload a profile picture."
+            if len(postData['city']) == 0:
+                errors['city'] = "Please enter a valid city."
+            if len(postData['state']) == 0:
+                errors['state'] = "Please enter a valid state."
             if User.objects.filter(email_address=postData['email_address']):
                 if postData['email_address'] == user_data[0].email_address:
                     errors['email_address'] = 'This email is already registered.'
@@ -106,9 +110,6 @@ class UserManager(models.Manager):
                 return errors
         return errors
 
-class Location(models.Model):
-    city = models.CharField(max_length=255)
-    state = models.CharField(max_length=255)
 
 class User(models.Model):
     first_name = models.CharField(max_length=255)
@@ -125,6 +126,11 @@ class User(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
     objects = UserManager()
 
+class Location(models.Model):
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=2)
+    user = models.ForeignKey(User, related_name="location")
+    
 class Number(models.Model):
     number = models.IntegerField()
     good = models.IntegerField()
