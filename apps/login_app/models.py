@@ -9,8 +9,10 @@ emailregex = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9.+_-]+\.[a-zA-Z]+$')
 nameregex = re.compile(r'^[a-zA-Z]+$')
 
 class UserManager(models.Manager):
-    def basic_validator(self, postData):
+    def basic_validator(self, postData, fileData):
         errors = {}
+        if not 'formtype' in postData: 
+            return False
         if postData['formtype'] == 'register':
             user_data = User.objects.filter(email_address=postData['email_address'])
             if not user_data:
@@ -59,14 +61,20 @@ class UserManager(models.Manager):
                 errors['password'] = 'Password must be more than 8 characters.'
                 return errors
             elif len(postData['passwordcheck']) == 0:
-                errors['password'] = 'Confirm passw ord field cannot be empty.'
+                errors['password'] = 'Confirm password field cannot be empty.'
                 return errors
             elif len(postData['passwordcheck']) < 9:
-                errors['password'] = 'Password must be more than 8 characters.'
+                errors['password'] = 'Confirmed password must be more than 8 characters.'
                 return errors
             elif postData['password'] != postData['passwordcheck']:
                 errors['password'] = 'Password does not match password confirmation.'
                 return errors
+            if not 'profile_pic' in fileData:
+                errors['image'] = "Please upload a profile picture."
+            if len(postData['city']) == 0:
+                errors['city'] = "Please enter a valid city."
+            if len(postData['state']) == 0:
+                errors['state'] = "Please enter a valid state."
             if User.objects.filter(email_address=postData['email_address']):
                 if postData['email_address'] == user_data[0].email_address:
                     errors['email_address'] = 'This email is already registered.'
@@ -77,7 +85,7 @@ class UserManager(models.Manager):
             if not emailregex.match(postData['email_address']) and postData['email_address'] != '':
                 errors['email_address'] = 'Invalid email address.'
                 return errors
-            elif not user_data or postData['email_address'] == '':
+            elif not user_data and postData['email_address'] == '':
                  errors['email_address'] = 'Email field cannot be empty.'
                  return errors
             elif not user_data:
@@ -85,16 +93,23 @@ class UserManager(models.Manager):
                 return errors
             user_data = User.objects.get(email_address=postData['email_address'])
             password = bcrypt.checkpw(postData['password'].encode(), user_data.password.encode())
-            if len(postData['password']) == 0:
+            if len(postData['password']) <= 0:
                 errors['password'] = 'Password field cannot be empty.'
-
+                return errors
             elif postData['email_address'] != user_data.email_address or password != True:
                 errors['password'] = 'Your email and password do not match. Please try again.'
-            return errors
+                return errors
+        elif postData['formtype'] == 'update':
+            if len(postData['password']) < 9:
+                errors['password'] = 'Password must be more than 8 characters.'
+            elif len(postData['passwordcheck']) < 9:
+                errors['password'] = 'Confirmed password must be more than 8 characters.'
+                return errors
+            elif postData['password'] != postData['passwordcheck']:
+                errors['password'] = 'Password does not match password confirmation.'
+                return errors
+        return errors
 
-class Location(models.Model):
-    city = models.CharField(max_length=255)
-    state = models.CharField(max_length=255)
 
 class User(models.Model):
     first_name = models.CharField(max_length=255)
@@ -111,12 +126,21 @@ class User(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
     objects = UserManager()
 
+class Location(models.Model):
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=2)
+    user = models.ForeignKey(User, related_name="location")
+    
 class Number(models.Model):
-    pass
+    number = models.IntegerField()
+    good = models.IntegerField()
+    bad = models.IntegerField()
 
 class Picture(models.Model):
+    image = models.FileField(upload_to='profile', null=True)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+    user = models.ForeignKey(User, related_name='pictures', null=True)
 
 class Rating(models.Model):
     rating_answer = models.BooleanField()
@@ -126,7 +150,8 @@ class Rating(models.Model):
 
 class Match(models.Model):
     answer = models.BooleanField()
-    user = models.ManyToManyField(User, related_name="matches")
+    user = models.ForeignKey(User, related_name="users")
+    matched_user = models.ForeignKey(User, related_name="matches")
 
 class Chatroom(models.Model):
     label = models.SlugField(unique=True)

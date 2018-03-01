@@ -2,26 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <script type="text/javascript" src='http://code.jquery.com/jquery-1.10.2.min.js'></script> 
     <title>Dashboard</title>
+    <style>
+        body {
+            background-color: #b0d0d3
+        }
+        .container {
+            background-color: white;
+            padding: 1%;
+            border: solid black 1px;
+        }
+        a {
+            color: white;
+        }
+        .btn {
+            margin: 10px;
+            margin-top: 0px;
+            margin-left: 0px;
+            margin-bottom: 0px;
+        }
+        #matches {
+            border: solid black 1px; 
+            text-align: center;
+        }
+    </style>
+    {% load static %}
 </head>
 <body>
-    <a href="/settings">Settings</a>
-    <a href="/logout">Logout</a>
-    <h1>Hello {{user.name}}</h1>
-
-    <div id="">
-        <!-- Add list of friends to this div -->
-        <form action = "/chat" method="post">
-            <div id="friends">
-                {% for friend in user.friends %}
-                    <div class="friend_box">
-                        <button name="friend" type="submit" value={{friend.id}}><img src=><h3>{{friend.name}}</h3></button>
-                        
-                    </div>
-                {% endfor %}
-            </div> 
-        </form>
-        
+    <div class='container'>
+        <div class='row'>
+            <a class='col s1 waves-effect waves-light btn' href="{% url 'my_settings' %}">Settings</a>
+            <a class='col s1 waves-effect waves-light btn' href="{% url 'my_matches' %}">Matches</a>
+            <a class='col s1 waves-effect waves-light btn' href="{% url 'my_logout' %}">Logout</a>
+            <br><br><br>
+            <div class='col s12'>
+                <h1>Hello {{user}}! Your number is {{request.session.number}}.</h1>
+                <img src="{% static 'media/' %}{{ pic.image }}">
+                <br><br><br>
+            </div>
+        </div>
+        <div class='row'>
+                <!-- Add list of friends to this div -->
+            <div class='col s12' id="matches">
+                    <h1>Matches</h1>
+                    {% for friend in all_friends %}
+                    <h4 class='col s2'>{{friend.first_name}}, {{friend.number}}</h4>
+                    {% endfor %}
+                </div> 
+            </div>
     </div>
 </body>
 </html>

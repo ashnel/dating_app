@@ -63,6 +63,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.media',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -131,3 +132,5 @@ CHANNEL_LAYERS = {
         "ROUTING": "apps.dashboard_app.routing.channel_routing",
     },
 }
+MEDIA_URL = 'apps/dashboard_app/static/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'apps/dashboard_app/static/media')

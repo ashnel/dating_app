@@ -10,11 +10,14 @@ import string, random
 # Create your views here.
 def dashboard(request):
     if 'id' in request.session:
+        user =  user.objects.get(id=request.session['id'])
         context = {
-            'user': User.objects.get(id=request.session['id']),
-            'friends': User.objects.get(id=request.session['id']).friends
+            'user': user,
+            'friends': User.objects.get(id=request.session['id']).friends,
+            'pic': Picture.objects.get(user=request.session['id'])
         }
-
+        pic = user.pictures.all()
+        print "Please Work!!!"
         result = render(request, 'dashboard_templates/dashboard.html', context)
     else:
         result = redirect ('/login')

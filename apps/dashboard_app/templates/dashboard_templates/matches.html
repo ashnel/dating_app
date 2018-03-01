@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <script type="text/javascript" src='http://code.jquery.com/jquery-1.10.2.min.js'></script> 
+    <title>Matches</title>
+</head>
+<body>
+    <div class='container'>
+        <h1>{{match_name}} {{match_age}}</h1>
+
+        <form action="{% url 'my_vote' %}" method='post'>
+            <input type='hidden' name='formtype' value='no' />
+            {% csrf_token %}
+            <input class='col s12 waves-effect waves-light btn' type='submit' value='No'>
+        </form>
+        <form action="{% url 'my_vote' %}" method='post'>
+            <input type='hidden' name='formtype' value='match' />
+            {% csrf_token %}
+            <input class='col s12 waves-effect waves-light btn' type='submit' value='Match'>
+        </form>
+    </div>
+</body>
+</html>

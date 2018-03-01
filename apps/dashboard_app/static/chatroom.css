@@ -10,3 +10,7 @@
 .name {
     font-weight: bold;
 }
+
+div.messages {
+    overflow: scroll;
+}
