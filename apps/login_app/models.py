@@ -151,6 +151,6 @@ class Message(models.Model):
 
     @property
     def formatted_created_at(self):
-        return self.created_at.strftime('%b %-d %-I:%M %p')
+        return self.created_at.strftime('%b %d %I:%M %p')
     def as_dict(self):
         return {'handle': self.handle, 'message': self.message, 'created_at': self.formatted_created_at}
