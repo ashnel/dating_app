@@ -7,6 +7,8 @@ from .models import User, Number, Picture, Match, Location
 import bcrypt
 
 def homepage(request):
+    if not 'id' in request.session:
+        return redirect('/')
     if 'compat_arr' not in request.session:
         request.session['compat_arr'] = []
     if 'friends' not in request.session:
@@ -16,6 +18,8 @@ def homepage(request):
     return render(request, 'login_app/homepage.html')
 
 def dashboard(request):
+    if not 'id' in request.session:
+        return redirect('/')
     errors = User.objects.basic_validator(request.POST, request.FILES)
     if not 'formtype' in request.POST:
         pic = Picture.objects.get(user=request.session['id'])
@@ -103,14 +107,20 @@ def dashboard(request):
     return render(request, 'dashboard_templates/dashboard.html', context)
 
 def home(request):
+    if not 'id' in request.session:
+        return redirect('/')
     return render(request, 'dashboard_templates/dashboard.html', {'user': request.session['first_name'], 'all_frieds': friends})
 
 def settings(request):
+    if not 'id' in request.session:
+        return redirect('/')
     current_user = User.objects.get(id=request.session['id'])
     birthday = unicode(current_user.birthdate)
     return render(request, 'dashboard_templates/settings.html', {'first_name': current_user.first_name, 'last_name': current_user.last_name, 'birthdate': birthday, 'email_address': current_user.email_address, 'gender': current_user.gender, 'orientation': current_user.orientation})
 
 def matches(request):
+    if not 'id' in request.session:
+        return redirect('/')
     errors = {}
     current_user = User.objects.get(id=request.session['id'])
     numbers = Number.objects.filter(number=current_user.number)
@@ -154,6 +164,8 @@ def matches(request):
     return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age, 'pic': Picture.objects.get(user=request.session['compat_arr'][0]).image})
 
 def vote(request):
+    if not 'id' in request.session:
+        return redirect('/')
     print request.session['compat_arr']
     matched_user_person = request.session['compat_arr'][0]
     current_user = User.objects.get(id=request.session['id'])
@@ -181,9 +193,13 @@ def vote(request):
         return redirect('/dashboard')
 
 def new_match(request):
+    if not 'id' in request.session:
+        return redirect('/')
     return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age})
 
 def update(request):
+    if not 'id' in request.session:
+        return redirect('/')
     errors = User.objects.basic_validator(request.POST, request.FILES)
     updated_user = User.objects.get(id=request.session['id'])
     if request.POST['password'] == '':
@@ -216,5 +232,7 @@ def update(request):
     return redirect('/settings')
 
 def logout(request):
+    if not 'id' in request.session:
+        return redirect('/')
     request.session.flush()
     return redirect('/')
