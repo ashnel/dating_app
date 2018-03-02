@@ -27,7 +27,7 @@ def chat(request):
     if 'id' in request.session:
         print 'if'
         friend_id = request.POST['friend']
-        room = Chatroom.objects.filter(users=User.objects.get(id=request.session['id'])).filter(users=User.objects.get(id=friend_id))
+        room = list(Chatroom.objects.filter(users=User.objects.get(id=request.session['id'])).filter(users=User.objects.get(id=friend_id)))
         if len(room)==0:
             new_room = None
             while not new_room:
@@ -37,7 +37,11 @@ def chat(request):
                     new_room.users.add(User.objects.get(id=request.session['id']))
                     new_room.users.add(User.objects.get(id=friend_id))
             room = new_room
-        result = redirect('/dashboard/chat/{}/'.format(room[0].label))
+        print room
+        if isinstance(room, list):
+            result = redirect('/dashboard/chat/{}/'.format(room[0].label))
+        else:
+            result = redirect('/dashboard/chat/{}/'.format(room.label))
     else:
         print 'else'
         result = redirect('/login')

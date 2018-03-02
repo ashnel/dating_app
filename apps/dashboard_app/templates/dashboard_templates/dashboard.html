@@ -27,6 +27,14 @@
             border: solid black 1px; 
             text-align: center;
         }
+        .friend_pic
+        {
+            width: 40%;
+        }
+        .profile_pic
+        {
+            width: 22%;
+        }
     </style>
     {% load static %}
 </head>
@@ -47,7 +55,7 @@
             <br>
             <div class='col s12'>
                 <h1>Hello {{user}}! Your number is {{request.session.number}}.</h1>
-                <img src="{% static 'media/' %}{{ pic.image }}">
+                <img src="{% static 'media/' %}{{ pic.image }}" class="profile_pic">
                 <br><br><br>
             </div>
         </div>
