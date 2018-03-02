@@ -29,7 +29,7 @@ def dashboard(request):
                 for u in user:
                     if u.matched_user == matchee:
                         if u.answer == True and m.answer == True:
-                            friend_pics = Picture.objects.get(user=m.id)
+                            friend_pics = Picture.objects.get(user=u.id)
                             friends_array.append([m.user, friend_pics])
        
         context = {

@@ -49,7 +49,8 @@
                     <h1>Matches</h1>
                     {% for friend in all_friends %}
                         <form action="/dashboard/chat" method="post">
-                            <input type="hidden" name="friend_id" value="friend.0.id">
+                            {% csrf_token %}
+                            <input type="hidden" name="friend" value="{{friend.0.id}}">
                             <button type="submit">
                                 <h4 class='col s2'>{{friend.0.first_name}}, {{friend.0.number}}</h4>
                                 <img src="{% static 'media/' %}{{friend.1.image}}" class="friend_pic">
