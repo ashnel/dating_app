@@ -23,7 +23,7 @@ $(document).ready(function(){
         var data = JSON.parse(message.data);
         $('#chat').append('<tr>' 
             + '<td class="time">' + data.created_at + '</td>' 
-            + '<td class="name">' + data.handle + '</td>'
+            + '<td class="name">' + data.handle + ':</td>'
             + '<td>' + data.message + ' </td>'
         + '</tr>');
         updateScroll();
