@@ -7,8 +7,6 @@ from .models import User, Number, Picture, Match, Location
 import bcrypt
 
 def homepage(request):
-    if not 'id' in request.session:
-        return redirect('/')
     if 'compat_arr' not in request.session:
         request.session['compat_arr'] = []
     if 'friends' not in request.session:
@@ -18,8 +16,6 @@ def homepage(request):
     return render(request, 'login_app/homepage.html')
 
 def dashboard(request):
-    if not 'id' in request.session:
-        return redirect('/')
     errors = User.objects.basic_validator(request.POST, request.FILES)
     if not 'formtype' in request.POST:
         pic = Picture.objects.get(user=request.session['id'])
@@ -41,7 +37,10 @@ def dashboard(request):
              'user': request.session['first_name'],
              'all_friends': friends_array,
         }
-        return render(request, 'dashboard_templates/dashboard.html', context)
+        if 'id' in request.session:
+            return render(request, 'dashboard_templates/dashboard.html', context)
+        else:
+            return redirect('/')
     if request.POST['formtype'] == 'register':
         if len(errors):
             for tag, error in errors.iteritems():
@@ -63,9 +62,10 @@ def dashboard(request):
                 life_path_number = 0
                 for x in number_str:
                     life_path_number += int(x)
+
             user_info = User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], email_address=request.POST['email_address'], password=password, gender=request.POST['gender'], orientation=request.POST['orientation'], birthdate=request.POST['birthdate'], age=age, number=life_path_number)
             picture = Picture.objects.create(image=request.FILES['profile_pic'], user = user_info)
-            location = Location.objects.create(city=request.POST['city'], state=request.POST['state'], user=user_info)
+            location = Location.objects.create(city=request.POST['city'].lower(), state=request.POST['state'].upper(), user=user_info)
             request.session['first_name'] = user_info.first_name 
             errors['email'] = 'Thank you for registering. You may now login.'
             for tag, error in errors.iteritems():
