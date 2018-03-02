@@ -37,6 +37,14 @@
             <a class='col s1 waves-effect waves-light btn' href="{% url 'my_matches' %}">Matches</a>
             <a class='col s1 waves-effect waves-light btn' href="{% url 'my_logout' %}">Logout</a>
             <br><br><br>
+            {% if messages %}
+                {% for message in messages %}
+                    {% if 'matches' in message.tags %}
+                        {{ message }}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <br>
             <div class='col s12'>
                 <h1>Hello {{user}}! Your number is {{request.session.number}}.</h1>
                 <img src="{% static 'media/' %}{{ pic.image }}">

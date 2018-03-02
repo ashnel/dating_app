@@ -100,14 +100,17 @@ class UserManager(models.Manager):
                 errors['password'] = 'Your email and password do not match. Please try again.'
                 return errors
         elif postData['formtype'] == 'update':
-            if len(postData['password']) < 9:
-                errors['password'] = 'Password must be more than 8 characters.'
-            elif len(postData['passwordcheck']) < 9:
-                errors['password'] = 'Confirmed password must be more than 8 characters.'
+            if postData['password'] == '':
                 return errors
-            elif postData['password'] != postData['passwordcheck']:
-                errors['password'] = 'Password does not match password confirmation.'
-                return errors
+            else:
+                if len(postData['password']) < 9:
+                    errors['password'] = 'Password must be more than 8 characters.'
+                elif len(postData['passwordcheck']) < 9:
+                    errors['password'] = 'Confirmed password must be more than 8 characters.'
+                    return errors
+                elif postData['password'] != postData['passwordcheck']:
+                    errors['password'] = 'Password does not match password confirmation.'
+                    return errors
         return errors
 
 
