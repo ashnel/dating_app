@@ -29,7 +29,7 @@ def dashboard(request):
                 for u in user:
                     if u.matched_user == matchee:
                         if u.answer == True and m.answer == True:
-                            friend_pics = Picture.objects.get(user=u.id)
+                            friend_pics = Picture.objects.get(user=m.user)
                             friends_array.append([m.user, friend_pics])
        
         context = {
@@ -91,7 +91,7 @@ def dashboard(request):
                         for u in user:
                             if u.matched_user == matchee:
                                 if u.answer == True and m.answer == True:
-                                    friend_pics = Picture.objects.get(user=u.id)
+                                    friend_pics = Picture.objects.get(user=m.user)
                                     friends_array.append([m.user, friend_pics])
             
                 context = {
@@ -151,7 +151,7 @@ def matches(request):
         for tag, error in errors.iteritems():
                 messages.error(request, error, extra_tags='matches')
         return redirect('/dashboard')
-    return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age, 'pic': Picture.objects.get(user=request.session['compat_arr'][0]).image})
+    return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'last_name':User.objects.get(id=request.session['compat_arr'][0]).last_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age, 'pic': Picture.objects.get(user=request.session['compat_arr'][0]).image})
 
 def vote(request):
     print request.session['compat_arr']
@@ -166,7 +166,7 @@ def vote(request):
                 return redirect('/dashboard')
             else:
                 request.session.modified = True
-                return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age, 'pic': Picture.objects.get(user=request.session['compat_arr'][0]).image})
+            return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'last_name':User.objects.get(id=request.session['compat_arr'][0]).last_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age, 'pic': Picture.objects.get(user=request.session['compat_arr'][0]).image})
         elif request.POST['formtype'] == 'no':
             Match.objects.create(answer=False, user=current_user, matched_user=User.objects.get(id=matched_user_person))
             del request.session['compat_arr'][0]
@@ -175,7 +175,7 @@ def vote(request):
                 return redirect('/dashboard')
             else:
                 request.session.modified = True
-                return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age, 'pic': Picture.objects.get(user=request.session['compat_arr'][0]).image})
+                return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'last_name':User.objects.get(id=request.session['compat_arr'][0]).last_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age, 'pic': Picture.objects.get(user=request.session['compat_arr'][0]).image})
     else:
         print 'else'
         return redirect('/dashboard')

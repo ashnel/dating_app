@@ -9,7 +9,7 @@ pyt<!DOCTYPE html>
 </head>
 <body>
     <div class='container'>
-        <h1>{{match_name}} {{match_age}}</h1>
+        <h1>{{match_name}} {{last_name}} {{match_age}}</h1>
         <img src="{% static 'media/' %}{{ pic }}">
 
         <form action="{% url 'my_vote' %}" method='post'>

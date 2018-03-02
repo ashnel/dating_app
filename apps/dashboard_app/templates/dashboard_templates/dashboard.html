@@ -23,17 +23,20 @@
             margin-left: 0px;
             margin-bottom: 0px;
         }
-        #matches {
-            border: solid black 1px; 
+        #matches h1 {
             text-align: center;
         }
         .friend_pic
         {
-            width: 40%;
+            width: 200%;
+            height: 300px;
         }
         .profile_pic
         {
-            width: 22%;
+            width: 90%;
+        }
+        h4 {
+            display: inline-block;
         }
     </style>
     {% load static %}
@@ -44,32 +47,50 @@
             <a class='col s1 waves-effect waves-light btn' href="{% url 'my_settings' %}">Settings</a>
             <a class='col s1 waves-effect waves-light btn' href="{% url 'my_matches' %}">Matches</a>
             <a class='col s1 waves-effect waves-light btn' href="{% url 'my_logout' %}">Logout</a>
-            <br><br><br>
-            {% if messages %}
+            <div style='color: red'>
+                {% if messages %}
                 {% for message in messages %}
                     {% if 'matches' in message.tags %}
-                        {{ message }}
+                    {{ message }}
                     {% endif %}
                 {% endfor %}
             {% endif %}
-            <br>
-            <div class='col s12'>
-                <h1>Hello {{user}}! Your number is {{request.session.number}}.</h1>
-                <img src="{% static 'media/' %}{{ pic.image }}" class="profile_pic">
-                <br><br><br>
             </div>
         </div>
+        <div class='row'>
+            <div class="col l12">
+                <div class="card-panel grey lighten-5 z-depth-1">
+                  <div class="row valign-wrapper">
+                    <div class="col s2">
+                        <img src="{% static 'media/' %}{{ pic.image }}" class=" circle profile_pic responsive-img"> <!-- notice the "circle" class -->
+                    </div>
+                    <div class="col s10">
+                      <span class="black-text">
+                        <h1>Hello {{user}}! Your number is {{request.session.number}}.</h1>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+
         <div class='row'>
                 <!-- Add list of friends to this div -->
             <div class='col s12' id="matches">
                     <h1>Matches</h1>
                     {% for friend in all_friends %}
-                        <form action="/dashboard/chat" method="post">
+                        <form class="col s4" action="/dashboard/chat" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="friend" value="{{friend.0.id}}">
-                            <button type="submit">
-                                <h4 class='col s2'>{{friend.0.first_name}}, {{friend.0.number}}</h4>
-                                <img src="{% static 'media/' %}{{friend.1.image}}" class="friend_pic">
+                            <button class='card darken-1' type="submit">
+                                <div class="col s5">
+                                        <img src="{% static 'media/' %}{{friend.1.image}}" class=" circle friend_pic responsive-img">
+                                </div>
+                                <div class="col s5">
+                                    <span class="black-text">
+                                        <h4 class='col s2'>{{friend.0.first_name}}, {{friend.0.number}}</h4>
+                                    </span>
+                                </div>
                             </button>
                         </form>
                     {% endfor %}
