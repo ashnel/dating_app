@@ -10,7 +10,7 @@ import string, random
 # Create your views here.
 def dashboard(request):
     if 'id' in request.session:
-        user =  user.objects.get(id=request.session['id'])
+        user =  User.objects.get(id=request.session['id'])
         context = {
             'user': user,
             'friends': User.objects.get(id=request.session['id']).friends,
@@ -45,8 +45,8 @@ def chat_room(request, label):
         else:
             room = Chatroom.objects.get(label=label)
             if room.users.filter(id=request.session['id']) > 0:
-                messages = reversed(room.messages.order_by('-created_on')[:50])
-                result = render(request, "chatroom.html", {'room':room, 'messages':messages, 'user':User.objects.get(id=request.session['id'])})
+                messages = reversed(room.messages.order_by('-created_at')[:50])
+                result = render(request, "dashboard_templates/chatroom.html", {'room':room, 'messages':messages, 'user':User.objects.get(id=request.session['id'])})
             else:
                 result =redirect('/dashboard')
     else:
