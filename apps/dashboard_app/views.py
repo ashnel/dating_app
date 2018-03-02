@@ -6,7 +6,6 @@ from ..login_app.models import *
 from django.db.models import Q
 import string, random
 
-
 # # Create your views here.
 # def dashboard(request):
 #     if 'id' in request.session:

@@ -5,12 +5,23 @@
 
 .time {
     font-size: 8pt;
+    width: 80px;
 }
 
 .name {
     font-weight: bold;
+    width: 100px;
 }
 
-div.messages {
+#messages {
+    width: 90%;
+    height: 400px;
     overflow: scroll;
+    word-break: break-all;
+}
+
+
+
+td {
+    border-left: 1px
 }

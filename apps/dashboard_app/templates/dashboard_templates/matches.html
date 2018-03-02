@@ -5,10 +5,12 @@ pyt<!DOCTYPE html>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
     <script type="text/javascript" src='http://code.jquery.com/jquery-1.10.2.min.js'></script> 
     <title>Matches</title>
+    {% load static %}
 </head>
 <body>
     <div class='container'>
         <h1>{{match_name}} {{match_age}}</h1>
+        <img src="{% static 'media/' %}{{ pic }}">
 
         <form action="{% url 'my_vote' %}" method='post'>
             <input type='hidden' name='formtype' value='no' />
