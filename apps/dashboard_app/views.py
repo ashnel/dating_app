@@ -24,7 +24,9 @@ import string, random
 #     return result
 
 def chat(request):
+    print "Chat*******************"
     if 'id' in request.session:
+        print 'if'
         friend_id = request.POST['friend']
         room = Chatroom.objects.filter(users=User.objects.get(id=request.session['id'])).filter(users=User.objects.get(id=friend_id))
         if len(room)==0:
@@ -33,20 +35,24 @@ def chat(request):
                 label = "".join([random.choice(string.ascii_letters + string.digits) for n in xrange(6)])
                 if len(Chatroom.objects.filter(label=label))==0:
                     new_room = Chatroom.objects.create(label=label)
+                    new_room.users.add(User.objects.get(id=request.session['id']))
+                    new_room.users.add(User.objects.get(id=friend_id))
             room = new_room
-        result = redirect('chat/{}'.format(room.label))
+        result = redirect('/dashboard/chat/{}/'.format(room[0].label))
     else:
+        print 'else'
         result = redirect('/login')
     return result
 def chat_room(request, label):
+    print "ChatRoom*************************"
     if 'id' in request.session:
         if  len(Chatroom.objects.filter(label=label))==0:
             result = redirect('/dashboard')
         else:
             room = Chatroom.objects.get(label=label)
             if room.users.filter(id=request.session['id']) > 0:
-                messages = reversed(room.messages.order_by('-created_on')[:50])
-                result = render(request, "chatroom.html", {'room':room, 'messages':messages, 'user':User.objects.get(id=request.session['id'])})
+                messages = reversed(room.messages.order_by('-created_at')[:50])
+                result = render(request, "dashboard_templates/chatroom.html", {'room':room, 'messages':messages, 'user':User.objects.get(id=request.session['id'])})
             else:
                 result =redirect('/dashboard')
     else:
