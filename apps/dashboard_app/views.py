@@ -6,25 +6,26 @@ from ..login_app.models import *
 from django.db.models import Q
 import string, random
 
-
-# Create your views here.
-def dashboard(request):
-    if 'id' in request.session:
-        user =  User.objects.get(id=request.session['id'])
-        context = {
-            'user': user,
-            'friends': User.objects.get(id=request.session['id']).friends,
-            'pic': Picture.objects.get(user=request.session['id'])
-        }
-        pic = user.pictures.all()
-        print "Please Work!!!"
-        result = render(request, 'dashboard_templates/dashboard.html', context)
-    else:
-        result = redirect ('/login')
-    return result
+# # Create your views here.
+# def dashboard(request):
+#     if 'id' in request.session:
+#         user =  user.objects.get(id=request.session['id'])
+#         context = {
+#             'user': user,
+#             'friends': User.objects.get(id=request.session['id']).friends,
+#             'pic': Picture.objects.get(user=request.session['id'])
+#         }
+#         pic = user.pictures.all()
+#         print "Please Work!!!"
+#         result = render(request, 'dashboard_templates/dashboard.html', context)
+#     else:
+#         result = redirect ('/login')
+#     return result
 
 def chat(request):
+    print "Chat*******************"
     if 'id' in request.session:
+        print 'if'
         friend_id = request.POST['friend']
         room = Chatroom.objects.filter(users=User.objects.get(id=request.session['id'])).filter(users=User.objects.get(id=friend_id))
         if len(room)==0:
@@ -33,12 +34,16 @@ def chat(request):
                 label = "".join([random.choice(string.ascii_letters + string.digits) for n in xrange(6)])
                 if len(Chatroom.objects.filter(label=label))==0:
                     new_room = Chatroom.objects.create(label=label)
+                    new_room.users.add(User.objects.get(id=request.session['id']))
+                    new_room.users.add(User.objects.get(id=friend_id))
             room = new_room
-        result = redirect('chat/{}'.format(room.label))
+        result = redirect('/dashboard/chat/{}/'.format(room[0].label))
     else:
+        print 'else'
         result = redirect('/login')
     return result
 def chat_room(request, label):
+    print "ChatRoom*************************"
     if 'id' in request.session:
         if  len(Chatroom.objects.filter(label=label))==0:
             result = redirect('/dashboard')
