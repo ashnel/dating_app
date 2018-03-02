@@ -37,7 +37,10 @@ def dashboard(request):
              'user': request.session['first_name'],
              'all_friends': friends_array,
         }
-        return render(request, 'dashboard_templates/dashboard.html', context)
+        if 'id' in request.session:
+            return render(request, 'dashboard_templates/dashboard.html', context)
+        else:
+            return redirect('/')
     if request.POST['formtype'] == 'register':
         if len(errors):
             for tag, error in errors.iteritems():
@@ -59,9 +62,10 @@ def dashboard(request):
                 life_path_number = 0
                 for x in number_str:
                     life_path_number += int(x)
+
             user_info = User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], email_address=request.POST['email_address'], password=password, gender=request.POST['gender'], orientation=request.POST['orientation'], birthdate=request.POST['birthdate'], age=age, number=life_path_number)
             picture = Picture.objects.create(image=request.FILES['profile_pic'], user = user_info)
-            location = Location.objects.create(city=request.POST['city'], state=request.POST['state'], user=user_info)
+            location = Location.objects.create(city=request.POST['city'].lower(), state=request.POST['state'].upper(), user=user_info)
             request.session['first_name'] = user_info.first_name 
             errors['email'] = 'Thank you for registering. You may now login.'
             for tag, error in errors.iteritems():
@@ -103,14 +107,20 @@ def dashboard(request):
     return render(request, 'dashboard_templates/dashboard.html', context)
 
 def home(request):
+    if not 'id' in request.session:
+        return redirect('/')
     return render(request, 'dashboard_templates/dashboard.html', {'user': request.session['first_name'], 'all_frieds': friends})
 
 def settings(request):
+    if not 'id' in request.session:
+        return redirect('/')
     current_user = User.objects.get(id=request.session['id'])
     birthday = unicode(current_user.birthdate)
     return render(request, 'dashboard_templates/settings.html', {'first_name': current_user.first_name, 'last_name': current_user.last_name, 'birthdate': birthday, 'email_address': current_user.email_address, 'gender': current_user.gender, 'orientation': current_user.orientation})
 
 def matches(request):
+    if not 'id' in request.session:
+        return redirect('/')
     errors = {}
     current_user = User.objects.get(id=request.session['id'])
     numbers = Number.objects.filter(number=current_user.number)
@@ -154,6 +164,8 @@ def matches(request):
     return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'last_name':User.objects.get(id=request.session['compat_arr'][0]).last_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age, 'pic': Picture.objects.get(user=request.session['compat_arr'][0]).image})
 
 def vote(request):
+    if not 'id' in request.session:
+        return redirect('/')
     print request.session['compat_arr']
     matched_user_person = request.session['compat_arr'][0]
     current_user = User.objects.get(id=request.session['id'])
@@ -181,9 +193,13 @@ def vote(request):
         return redirect('/dashboard')
 
 def new_match(request):
+    if not 'id' in request.session:
+        return redirect('/')
     return render(request, 'dashboard_templates/matches.html', {'match_name':User.objects.get(id=request.session['compat_arr'][0]).first_name, 'match_age':User.objects.get(id=request.session['compat_arr'][0]).age})
 
 def update(request):
+    if not 'id' in request.session:
+        return redirect('/')
     errors = User.objects.basic_validator(request.POST, request.FILES)
     updated_user = User.objects.get(id=request.session['id'])
     if request.POST['password'] == '':
@@ -216,5 +232,7 @@ def update(request):
     return redirect('/settings')
 
 def logout(request):
+    if not 'id' in request.session:
+        return redirect('/')
     request.session.flush()
     return redirect('/')

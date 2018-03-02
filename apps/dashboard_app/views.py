@@ -23,7 +23,6 @@ import string, random
 #     return result
 
 def chat(request):
-    print "Chat*******************"
     if 'id' in request.session:
         print 'if'
         friend_id = request.POST['friend']
@@ -47,7 +46,6 @@ def chat(request):
         result = redirect('/login')
     return result
 def chat_room(request, label):
-    print "ChatRoom*************************"
     if 'id' in request.session:
         if  len(Chatroom.objects.filter(label=label))==0:
             result = redirect('/dashboard')

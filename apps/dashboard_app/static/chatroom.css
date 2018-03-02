@@ -20,8 +20,18 @@
     word-break: break-all;
 }
 
+#chat {
+    width: 99%;
+}
 
-
+tr {
+    border-top: 1px solid black;
+    outline: thin solid;
+}
 td {
-    border-left: 1px
+    border-left: 1px solid black;
+}
+
+.message {
+    width: 80%;
 }
