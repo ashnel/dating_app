@@ -28,7 +28,7 @@ pathlib2==2.3.0
 pickleshare==0.7.4
 prompt-toolkit==1.0.15
 pycparser==2.18
-Pygments==2.2.0
+Pygments==2.7.4
 pypiwin32==223
 pytz==2018.3
 pywin32==223
