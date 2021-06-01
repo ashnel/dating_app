@@ -42,7 +42,7 @@ traitlets==4.3.2
 Twisted==17.9.0
 txaio==2.8.2
 typing==3.6.4
-urllib3==1.22
+urllib3==1.26.5
 wcwidth==0.1.7
 win-unicode-console==0.5
 zope.interface==4.4.3
