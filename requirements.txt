@@ -31,7 +31,7 @@ pycparser==2.18
 Pygments==2.2.0
 pypiwin32==223
 pytz==2018.3
-pywin32==223
+pywin32==301
 redis==2.10.6
 requests==2.18.4
 requests-oauthlib==0.8.0
